@@ -1,0 +1,50 @@
+{
+    "name":"daily_price_diff",
+
+	"type":"factor",
+	
+	"input":[
+        {
+			"db":"basic_data_db",
+			"group_name":"",
+			"sources":[
+				{
+					"table":"cbond.stock_daily_quotes_non_ror",
+					"columns":[
+						"open", "close", "high", "low", "create_time"
+					]
+				}
+			],
+			"start_time":"-172800",
+			"end_time":"schedule_now"
+		}
+    ],
+
+	"output":[
+		{
+            "group_name":"daily_price_diff", 
+            "fields":[
+                "daily_open_diff",
+                "daily_close_diff",
+                "daily_high_diff",
+                "daily_low_diff"
+            ],
+            "category_1":"示例项目",
+            "category_2":"",
+            "category_3":"",
+            "target":"stock",
+            "description":"该示例项目计算每日股票与前一日价格差"
+        }
+	],
+
+	"history":{
+		"external_source":"daily_price_diff.py",
+		"mode":"single"
+	},
+
+	"schedule":["****-**-** 15:30:00"],
+	
+	"computation":{
+		"external_source":"daily_price_diff.py"
+	}
+}
