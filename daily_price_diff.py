@@ -37,13 +37,13 @@ class daily_price_diff():
         result_low['time'] = current_time
 
         # 组合结果
-        res = {
+        res2 = {
             'daily_open_diff': result_open,
             'daily_close_diff': result_close,
             'daily_high_diff': result_high,
             'daily_low_diff': result_low
         }
-        return res
+        return res2
     
     @validation()
     def compute_history(self, input: Dict[str, pd.DataFrame], start_time:datetime, end_time:datetime, time_list:list) -> Dict[str, pd.DataFrame]:
