@@ -44,6 +44,7 @@ class daily_price_diff():
             'daily_low_diff': result_low
         }
         return res2
+    # 111
     
     @validation()
     def compute_history(self, input: Dict[str, pd.DataFrame], start_time:datetime, end_time:datetime, time_list:list) -> Dict[str, pd.DataFrame]:
