@@ -42,7 +42,7 @@
 		"mode":"batch"
 	},
 
-	"schedule":["****-**-** 11:05:00"],
+	"schedule":["****-**-** 11:08:00"],
 	
 	"computation":{
 		"external_source":"daily_price_diff.py"
