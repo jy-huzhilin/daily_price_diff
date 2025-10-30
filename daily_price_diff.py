@@ -18,7 +18,7 @@ class daily_price_diff():
         # 处理数据计算差值
         df_sorted = df.sort_values(by=['ths_code', 'date'])
         df_sorted[['open_diff', 'close_diff', 'high_diff', 'low_diff']] = df_sorted.groupby('ths_code')[['open', 'close', 'high', 'low']].diff()
-        df_sorted = df_sorted[df_sorted['date'] == current_time.date()].reset_index(drop=True)
+        df_sorted = df_sorted[df_sorted[['open_diff', 'close_diff', 'high_diff', 'low_diff']].notna().any(axis=1)].reset_index(drop=True)
 
         # 保留计算结果
         result_open = df_sorted[['ths_code', 'open_diff']]
