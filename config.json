@@ -39,7 +39,7 @@
 
 	"history":{
 		"external_source":"daily_price_diff.py",
-		"mode":"batch"
+		"mode":"single"
 	},
 
 	"schedule":["****-**-** 11:08:00"],
