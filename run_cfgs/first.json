@@ -15,14 +15,6 @@
 			],
 			"start_time":"-172800",
 			"end_time":"schedule_now"
-		},
-		{
-			"db":"factor_db",
-			"sources":[
-				"daily_open_diff"
-			],
-			"start_time":"-172800",
-			"end_time":"schedule_now"
 		}
     ],
 
@@ -40,15 +32,7 @@
             "category_3":"",
             "target":"stock",
             "description":"该示例项目计算每日股票与前一日价格差"
-        },
-		{
-			"group_name":"random_model",
-			"fields":[
-				"random_model"
-			],
-			"type":"model",
-			"model_type":"torch"
-		}
+        }
 	],
 
 	"schedule":[
