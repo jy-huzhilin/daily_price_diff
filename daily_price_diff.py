@@ -6,7 +6,7 @@ import torch
 import torch.nn as nn
 
 class daily_price_diff():
-    def compute(self, input: Dict[str, pd.DataFrame],  current_time: datetime) -> Dict[str, pd.DataFrame]:
+    def run(self, input: Dict[str, pd.DataFrame],  current_time: datetime) -> Dict[str, pd.DataFrame]:
         # 获取输入数据
         df = input['cbond.stock_daily_quotes_non_ror']
         # 去重处理,取create_time最新字段
