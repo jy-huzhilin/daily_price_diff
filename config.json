@@ -1,7 +1,5 @@
 {
     "name":"daily_price_diff",
-
-	"type":"factor",
 	
 	"input":[
         {
@@ -34,19 +32,25 @@
             "category_3":"",
             "target":"stock",
             "description":"该示例项目计算每日股票与前一日价格差"
-        }
+        },
+		{
+			"group_name":"random_model",
+			"fields":[
+				"random_model"
+			],
+			"type":"model",
+			"model_type":"torch"
+		}
 	],
-
-	"history":{
-		"external_source":"daily_price_diff.py",
-		"mode":"single"
-	},
 
 	"schedule":[
 		"****-**-** 17:30:00"
 	],
 
 	"computation":{
-		"external_source":"daily_price_diff.py"
+		"external_source":"daily_price_diff.py",
+		"class_name":"daily_price_diff",
+		"single":"compute",
+		"batch":""
 	}
 }

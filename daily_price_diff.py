@@ -2,13 +2,10 @@ from Validator import *
 from typing import Dict
 from datetime import datetime
 import pandas as pd
+import torch
+import torch.nn as nn
 
 class daily_price_diff():
-    @validation(validators=[
-        DtypeValidator(),
-        DuplicateValidator(),
-        CountValidator(min_count=5000, max_count=6000)
-    ])
     def compute(self, input: Dict[str, pd.DataFrame],  current_time: datetime) -> Dict[str, pd.DataFrame]:
         # 获取输入数据
         df = input['cbond.stock_daily_quotes_non_ror']
@@ -36,15 +33,27 @@ class daily_price_diff():
         result_low = result_low.rename(columns={'ths_code': 'symbol', 'low_diff': 'value'})
         result_low['time'] = current_time
 
+        X = torch.rand(20, 5)
+        y = torch.randint(0, 2, (20,))
+
+        model = nn.Sequential(nn.Linear(5, 10), nn.ReLU(), nn.Linear(10, 2))
+        criterion = nn.CrossEntropyLoss()
+        optimizer = torch.optim.SGD(model.parameters(), lr=0.1)
+
+        for _ in range(5):
+            optimizer.zero_grad()
+            output = model(X)
+            loss = criterion(output, y)
+            loss.backward()
+            optimizer.step()
+
         # 组合结果
         res = {
             'daily_open_diff': result_open,
             'daily_close_diff': result_close,
             'daily_high_diff': result_high,
-            'daily_low_diff': result_low
+            'daily_low_diff': result_low,
+            'random_model': {current_time: model.state_dict()}
         }
         return res
     
-    @validation()
-    def compute_history(self, input: Dict[str, pd.DataFrame], start_time:datetime, end_time:datetime, time_list:list) -> Dict[str, pd.DataFrame]:
-        pass
