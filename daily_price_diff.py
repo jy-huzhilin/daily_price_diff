@@ -1,16 +1,18 @@
 import os
+import mlflow
+import mlflow.sklearn
 import numpy as np
 import pandas as pd
 from typing import Dict
-from datetime import datetime
-
-from jade_ml.tracker import JadeTracker
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 
 
 class daily_price_diff:
     """
     模型管理功能测试项目
-    生成合成数据，训练线性回归模型，通过 JadeTracker 记录到 MLflow。
+    生成合成数据，训练线性回归模型，通过 MLflow 记录训练过程。
+    框架（worker_service.py）已通过环境变量注入 tracking URI、experiment 及父 run 上下文。
     """
 
     def compute_history(
@@ -33,26 +35,23 @@ class daily_price_diff:
             "end_time":     end_time,
         }
 
-        # ── user_id：优先环境变量，其次默认 huzl ────────────────────────────
-        user_id = os.environ.get("JADE_USER_ID", "huzl")
+        # ── 从框架注入的环境变量初始化 MLflow ──────────────────────────────
+        # worker_service.py 在调用本方法前已设置：
+        #   JADE_TRACKING_URI, JADE_EXPERIMENT_NAME, JADE_PARENT_MLFLOW_RUN_ID
+        tracking_uri = os.getenv("JADE_TRACKING_URI")
+        if tracking_uri:
+            mlflow.set_tracking_uri(tracking_uri)
 
-        # ── JadeTracker ─────────────────────────────────────────────────────
-        tracker = JadeTracker()
+        experiment_name = os.getenv("JADE_EXPERIMENT_NAME")
+        if experiment_name:
+            mlflow.set_experiment(experiment_name)
+
         run_name = f"linear_regression_{start_time[:10]}_to_{end_time[:10]}"
 
-        with tracker.start_run(
-            run_name=run_name,
-            user_id=user_id,
-            tags={
-                "jade.project_name": "daily_price_diff",
-                "jade.team":         "cbond",
-                "jade.repo.url":     "https://github.com/jy-huzhilin/daily_price_diff.git",
-                "jade.repo.branch":  "model-train-test",
-                "jade.repo.commit":  _get_git_commit(),
-            },
-        ):
+        # nested=True：将本 run 挂载到框架已启动的父 run 下
+        with mlflow.start_run(run_name=run_name, nested=True):
             # 记录超参数
-            tracker.log_params(params)
+            mlflow.log_params(params)
 
             # ── 生成合成数据 ────────────────────────────────────────────────
             rng = np.random.RandomState(params["random_state"])
@@ -65,9 +64,6 @@ class daily_price_diff:
             y_train, y_test = y[:n_train], y[n_train:]
 
             # ── 分 epoch 模拟训练，记录曲线 ─────────────────────────────────
-            from sklearn.linear_model import LinearRegression
-            from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
-
             model = LinearRegression()
             n_epochs = 10
             for epoch in range(n_epochs):
@@ -77,7 +73,7 @@ class daily_price_diff:
                 test_mse  = mean_squared_error(y_test,      model.predict(X_test))
                 train_r2  = r2_score(y_train[:n], model.predict(X_train[:n]))
                 test_r2   = r2_score(y_test,      model.predict(X_test))
-                tracker.log_metrics(
+                mlflow.log_metrics(
                     {"train_mse": train_mse, "test_mse": test_mse,
                      "train_r2":  train_r2,  "test_r2":  test_r2},
                     step=epoch,
@@ -86,29 +82,13 @@ class daily_price_diff:
             # ── 最终全量训练并记录汇总指标 ───────────────────────────────────
             model.fit(X_train, y_train)
             y_pred = model.predict(X_test)
-            tracker.log_metrics({
+            mlflow.log_metrics({
                 "final_mse": mean_squared_error(y_test, y_pred),
                 "final_mae": mean_absolute_error(y_test, y_pred),
                 "final_r2":  r2_score(y_test, y_pred),
             })
 
             # ── 记录模型 ────────────────────────────────────────────────────
-            tracker.log_model(model, "model", model_type="sklearn")
+            mlflow.sklearn.log_model(model, "model")
 
         return {}, {}
-
-
-def _get_git_commit() -> str:
-    """尝试读取当前 HEAD commit hash，失败时返回占位字符串。"""
-    try:
-        import subprocess
-        result = subprocess.run(
-            ["git", "rev-parse", "HEAD"],
-            capture_output=True, text=True, timeout=5,
-            cwd=os.path.dirname(os.path.abspath(__file__)),
-        )
-        if result.returncode == 0:
-            return result.stdout.strip()
-    except Exception:
-        pass
-    return "unknown"
