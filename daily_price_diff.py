@@ -1,14 +1,8 @@
 import os
-import sys
 import numpy as np
 import pandas as pd
 from typing import Dict
 from datetime import datetime
-
-# 确保 jade_ml 可以被 import（worker 进程继承了父进程的 sys.path，但以防万一）
-_jade_root = '/tech/home/hzl/Repo/legendary_jade'
-if _jade_root not in sys.path:
-    sys.path.insert(0, _jade_root)
 
 from jade_ml.tracker import JadeTracker
 
