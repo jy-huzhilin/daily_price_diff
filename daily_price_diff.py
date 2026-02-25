@@ -1,4 +1,5 @@
 import os
+import time
 import mlflow
 import mlflow.sklearn
 import numpy as np
@@ -76,7 +77,7 @@ class daily_price_diff:
 
             # ── 分 epoch 模拟训练，记录曲线 ─────────────────────────────────
             model = LinearRegression()
-            n_epochs = 10
+            n_epochs = 20
             for epoch in range(n_epochs):
                 n = max(1, int(n_train * (epoch + 1) / n_epochs))
                 model.fit(X_train[:n], y_train[:n])
@@ -89,6 +90,7 @@ class daily_price_diff:
                      "train_r2":  train_r2,  "test_r2":  test_r2},
                     step=epoch,
                 )
+                time.sleep(3)  # 每个 epoch 暂停 3 秒，共约 60 秒，方便测试监控
 
             # ── 最终全量训练并记录汇总指标 ───────────────────────────────────
             model.fit(X_train, y_train)
