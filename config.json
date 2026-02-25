@@ -1,0 +1,18 @@
+{
+    "name": "daily_price_diff",
+    "type": "model",
+    "description": "模型管理功能测试项目 - 训练线性回归模型演示 MLflow 全流程",
+    "team": "cbond",
+
+    "input": [],
+
+    "output": [],
+
+    "schedule": [],
+
+    "computation": {
+        "external_source": "daily_price_diff.py",
+        "class_name": "daily_price_diff",
+        "batch": "compute_history"
+    }
+}
