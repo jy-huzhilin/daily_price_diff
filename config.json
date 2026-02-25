@@ -13,6 +13,7 @@
     "computation": {
         "external_source": "daily_price_diff.py",
         "class_name": "daily_price_diff",
+        "single": "compute",
         "batch": "compute_history"
     }
 }

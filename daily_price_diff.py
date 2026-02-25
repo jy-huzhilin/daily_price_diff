@@ -4,6 +4,7 @@ import mlflow.sklearn
 import numpy as np
 import pandas as pd
 from typing import Dict
+from datetime import datetime
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 
@@ -14,6 +15,16 @@ class daily_price_diff:
     生成合成数据，训练线性回归模型，通过 MLflow 记录训练过程。
     框架（worker_service.py）已通过环境变量注入 tracking URI、experiment 及父 run 上下文。
     """
+
+    def compute(
+        self,
+        input_dataframes: Dict[str, pd.DataFrame],
+        current_time: datetime,
+    ):
+        """单次模式入口，直接复用批量训练逻辑。"""
+        ts = current_time.strftime("%Y-%m-%d %H:%M:%S") if isinstance(current_time, datetime) else str(current_time)
+        self.compute_history(input_dataframes, ts, ts, [current_time])
+        return {}
 
     def compute_history(
         self,
