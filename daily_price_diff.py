@@ -7,6 +7,10 @@ class daily_price_diff():
     def run(self, input: Dict[str, pd.DataFrame],  current_time: datetime) -> Dict[str, pd.DataFrame]:
         # 获取输入数据
         df = input['cbond.stock_daily_quotes_non_ror']
+        if hasattr(df, 'to_pandas'):
+            df = df.to_pandas()
+        if not isinstance(df, pd.DataFrame):
+            raise TypeError(f"cbond.stock_daily_quotes_non_ror 必须是 DataFrame 或可转 DataFrame 的 Arrow 对象，实际类型: {type(df)}")
         # 去重处理,取create_time最新字段
         df = df.sort_values(by='create_time', ascending=False).drop_duplicates(subset=['date', 'ths_code'], keep='first')
 

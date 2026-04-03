@@ -2,9 +2,10 @@
     "name":"daily_price_diff",
 	
 	"input":[
-        {
+		{
 			"db":"basic_data_db",
 			"group_name":"",
+			"return_format":"arrow",
 			"sources":[
 				{
 					"table":"cbond.stock_daily_quotes_non_ror",
@@ -20,6 +21,20 @@
     ],
 
 	"output":[
+		{
+			"group_name":"daily_price_diff",
+			"fields":[
+				"daily_open_diff",
+				"daily_close_diff",
+				"daily_high_diff",
+				"daily_low_diff"
+			],
+			"category_1":"示例项目",
+			"category_2":"",
+			"category_3":"",
+			"target":"stock",
+			"description":"该示例项目计算每日股票与前一日价格差"
+		}
 	],
 
 	"schedule":[
