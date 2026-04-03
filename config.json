@@ -14,7 +14,7 @@
 					]
 				}
 			],
-			"drop_duplicate": true,
+			"drop_duplicate": false,
 			"start_time":"-172800",
 			"end_time":"schedule_now"
 		}
